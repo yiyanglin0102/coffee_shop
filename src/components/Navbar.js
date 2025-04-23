@@ -5,7 +5,7 @@ const Navbar = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6">☕ Coffee Shop</Typography>
+        <Typography variant="h6">Dashboard</Typography>
       </Toolbar>
     </AppBar>
   );

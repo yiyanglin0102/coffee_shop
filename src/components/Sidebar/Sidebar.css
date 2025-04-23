@@ -68,3 +68,31 @@
 .nav-item {
   padding: 10px 20px 10px 30px; /* Indent items more than groups */
 }
+
+/* Add to Sidebar.css */
+.nav-item.with-submenu {
+  cursor: pointer;
+  user-select: none;
+}
+
+.menu-label {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+}
+
+.menu-label svg {
+  margin-left: auto;
+  opacity: 0.7;
+}
+
+.submenu {
+  background: rgba(0,0,0,0.1);
+  border-left: 3px solid #3498db;
+}
+
+/* Indent submenu items */
+.nav-item.indented {
+  padding-left: 40px !important;
+}
+
