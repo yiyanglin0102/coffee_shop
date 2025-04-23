@@ -104,3 +104,9 @@ dist
 
 # TernJS port file
 .tern-port
+
+# amplify
+node_modules
+.amplify
+amplify_outputs*
+amplifyconfiguration*
