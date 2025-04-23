@@ -8,6 +8,25 @@ import Transactions from './pages/Transactions';
 import Menu from './pages/Menu';
 import MenuOverview from './pages/MenuOverview/MenuOverview';
 
+import { Amplify } from 'aws-amplify';
+import config from './aws-exports';
+
+Amplify.configure({
+  ...config,
+  API: {
+    ...config.API,
+    endpoints: [
+      {
+        name: "menuApi",
+        endpoint: process.env.REACT_APP_API_ENDPOINT,
+        region: process.env.REACT_APP_REGION,
+        custom_header: async () => ({
+          'x-api-key': process.env.REACT_APP_API_KEY
+        })
+      }
+    ]
+  }
+});
 
 const App = () => (
   <Router>
@@ -20,7 +39,6 @@ const App = () => (
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/menu" element={<Menu />} />
           <Route path="/menu/overview" element={<MenuOverview />} />
-
         </Routes>
       </main>
     </div>

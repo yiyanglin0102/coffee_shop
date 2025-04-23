@@ -1,70 +1,95 @@
-# Getting Started with Create React App
+# ☕ Coffee Shop Management System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A full-stack solution for managing coffee shop operations, built with AWS Amplify and React.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Multi-platform UI**: Responsive web + mobile-ready components
+- **Real-time Sync**: Powered by AWS AppSync
+- **Menu Management**: Categories, items, modifiers
+- **Order Processing**: Ticket workflow from POS to kitchen
+- **Inventory Tracking**: Stock level monitoring
+- **Role-based Access**: Staff vs. admin permissions
 
-### `npm start`
+## Architecture
+```
+src/
+├── model/ # Domain models
+├── view/ # Platform-specific UI
+├── view-model/ # Shared business logic
+├── services/ # AWS Amplify wrappers
+└── App.js # Entry point
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
-### `npm test`
+**Pattern**: Hybrid MVVM/MVC  
+**State**: MobX/Recoil  
+**Auth**: Amazon Cognito  
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Tech Stack
+```
+| Area           | Technology            |
+| -------------- | --------------------- |
+| Frontend       | React, Material-UI    |
+| Mobile         | React Native          |
+| Backend        | AWS Amplify (GraphQL) |
+| Database       | DynamoDB              |
+| Authentication | Cognito               |
+| CI/CD          | Amplify Hosting       |
+```
+## Setup
 
-### `npm run build`
+1. **Clone Repository**
+   ```bash
+   git clone https://github.com/your-repo/coffee-shop.git
+   cd coffee-shop
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+   ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. **Amplify Configuration**
+   ```bash
+   amplify init
+   amplify push
+   ```
 
-### `npm run eject`
+4. **Environment Variables**
+   ```bash
+   cp .env.example .env
+   ```
+5. **Run Development Server**
+   ```bash
+   npm start
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Deployment
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+    ```bash
+   # Deploy to Amplify Hosting
+   amplify publish
+   
+   # Deploy mobile builds
+   amplify add hosting
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Environment Variables
+```
+| Variable             | Description                        |
+|----------------------|------------------------------------|
+| REACT_APP_API_KEY    | Amplify GraphQL API Key            |
+| REACT_APP_REGION     | AWS Region (e.g. us-east-1)        |
+```
+## Project Structure
+```
+| Directory         | Contents                          |
+|------------------|-----------------------------------|
+| /amplify         | Backend infrastructure            |
+| /src/model       | Business domain models            |
+| /src/view        | React components (organized by platform) |
+| /src/services    | AWS service wrappers              |
+```
