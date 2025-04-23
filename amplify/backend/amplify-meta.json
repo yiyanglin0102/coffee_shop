@@ -1,0 +1,56 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-coffeeshop-dev-03afc-authRole",
+      "UnauthRoleArn": "arn:aws:iam::091974520371:role/amplify-coffeeshop-dev-03afc-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::091974520371:role/amplify-coffeeshop-dev-03afc-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-coffeeshop-dev-03afc-deployment",
+      "UnauthRoleName": "amplify-coffeeshop-dev-03afc-unauthRole",
+      "StackName": "amplify-coffeeshop-dev-03afc",
+      "StackId": "arn:aws:cloudformation:us-east-1:091974520371:stack/amplify-coffeeshop-dev-03afc/6fc916e0-1ffa-11f0-afbf-1296ddabe6ab",
+      "AmplifyAppId": "d1e4eebb95l92f"
+    }
+  },
+  "auth": {
+    "coffeeshop664b6379": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false,
+      "frontendAuthConfig": {
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
+        },
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-coffeeshop-dev-03afc-deployment/amplify-cfn-templates/auth/coffeeshop664b6379-cloudformation-template.json",
+        "logicalId": "authcoffeeshop664b6379"
+      },
+      "lastPushTimeStamp": "2025-04-23T04:27:10.628Z",
+      "output": {
+        "UserPoolId": "us-east-1_QFKeszOHQ",
+        "AppClientIDWeb": "3rinrd89o1eovrl67ka244227v",
+        "AppClientID": "2gel7a4sudebet3t68l40p08ei",
+        "IdentityPoolId": "us-east-1:69322a73-172c-4aa3-84dd-5be4fcc378cc",
+        "UserPoolArn": "arn:aws:cognito-idp:us-east-1:091974520371:userpool/us-east-1_QFKeszOHQ",
+        "IdentityPoolName": "coffeeshop664b6379_identitypool_664b6379__dev",
+        "UserPoolName": "coffeeshop664b6379_userpool_664b6379"
+      },
+      "lastPushDirHash": "S7JKbuAaJUjrnaYXOVYi0Zw1McY="
+    }
+  }
+}
