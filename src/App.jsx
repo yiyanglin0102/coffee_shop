@@ -6,6 +6,8 @@ import MainPage from './pages/MainPage';
 import Orders from './pages/Orders';
 import Transactions from './pages/Transactions';
 import Menu from './pages/Menu';
+import MenuOverview from './pages/MenuOverview/MenuOverview';
+
 
 const App = () => (
   <Router>
@@ -17,6 +19,8 @@ const App = () => (
           <Route path="/orders" element={<Orders />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/menu" element={<Menu />} />
+          <Route path="/menu/overview" element={<MenuOverview />} />
+
         </Routes>
       </main>
     </div>

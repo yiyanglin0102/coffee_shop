@@ -54,6 +54,7 @@ const Sidebar = () => {
           </div>
           {expandedSections.menuManagement && (
             <div className="submenu">
+              <NavItem to="/menu/overview" icon="📊" label="Menu Overview" indent/>
               <NavItem to="/menu/editor" icon="✏️" label="Menu Editor" indent />
               <NavItem to="/menu/categories" icon="🗂️" label="Categories" indent />
               <NavItem to="/menu/dishes" icon="🍛" label="Dishes" indent />

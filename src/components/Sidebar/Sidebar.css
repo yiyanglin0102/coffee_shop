@@ -96,3 +96,25 @@
   padding-left: 40px !important;
 }
 
+/* Dashboard item styling */
+.submenu-header {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 8px;
+}
+
+.dashboard-item {
+  background: rgba(52, 152, 219, 0.2) !important;
+  font-weight: 600 !important;
+  border-left: 3px solid #3498db !important;
+}
+
+.dashboard-item:hover {
+  background: rgba(52, 152, 219, 0.3) !important;
+}
+
+/* Divider between sections */
+.divider {
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+  margin: 8px 0;
+}

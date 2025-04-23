@@ -1,0 +1,36 @@
+.menu-overview {
+    padding: 20px;
+  }
+  
+  .category-filter {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .menu-grid {
+    margin-top: 20px;
+  }
+  
+  .loading, .no-items {
+    text-align: center;
+    margin: 40px;
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .category-filter {
+      flex-wrap: wrap;
+    }
+    
+    .MuiToggleButtonGroup-root {
+      width: 100%;
+    }
+    
+    .MuiToggleButton-root {
+      padding: 6px;
+      font-size: 0.8rem;
+    }
+  }
