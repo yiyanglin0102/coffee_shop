@@ -30,7 +30,7 @@ Amplify.configure({
 
 const App = () => (
   <Router>
-    <div className="app">
+    <div className="app"> {console.log("??received:", process.env.REACT_APP_API_KEY)}
       <Sidebar />
       <main className="main-content">
         <Routes>

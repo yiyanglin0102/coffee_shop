@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Grid, ToggleButton, ToggleButtonGroup, Typography, CircularProgress, Alert, Button } from '@mui/material';
 import MenuItem from '../../components/MenuItem';
 import { generateClient } from 'aws-amplify/api';
-import { listMenuItems } from '../../graphql/queries';
+import { listDishes } from '../../graphql/queries';
 import './MenuOverview.css';
 
 const client = generateClient();
@@ -13,7 +13,6 @@ const MenuOverview = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Sample data for initial development
   const sampleMenuItems = [
     {
       id: '1',
@@ -42,34 +41,48 @@ const MenuOverview = () => {
   ];
 
   const fetchMenuItems = async () => {
+    setIsLoading(true);
+    setError(null);
+
     try {
-      // Try to fetch from backend first
       const { data } = await client.graphql({ 
-        query: listMenuItems,
-        authMode: 'API_KEY'
+        query: listDishes,
+        // authMode: 'API_KEY'
       });
-      setMenuItems(data.listMenuItems.items);
-      setError(null);
+      console.log("GraphQL Response:", data);
+      if (data?.listDishes?.items) {
+        console.log("Fetched Dishes:", data.listDishes.items);
+
+        const transformedItems = data.listDishes.items.map(item => ({
+          id: item.id,
+          name: item.name_en,
+          description: item.description_en,
+          price: item.price,
+          category: item.categoryId?.toLowerCase(), // Customize if needed
+          isAvailable: item.isAvailable
+        }));
+
+        setMenuItems(transformedItems);
+      } else {
+        throw new Error('No items returned from API');
+      }
     } catch (err) {
-      console.error('Error fetching from backend, using sample data:', err);
-      // Fallback to sample data if backend fails
+      console.error('Error fetching menu items:', err);
+      setError('Failed to connect to backend. Using sample data.');
       setMenuItems(sampleMenuItems);
-      setError('Connected to sample data (backend unavailable)');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleUseSampleData = () => {
-    setIsLoading(true);
-    setMenuItems(sampleMenuItems);
-    setError('Using sample data (not connected to backend)');
-    setIsLoading(false);
-  };
-
   useEffect(() => {
     fetchMenuItems();
   }, []);
+
+  const handleUseSampleData = () => {
+    setMenuItems(sampleMenuItems);
+    setError('Using sample data (not connected to backend)');
+  };
 
   const filteredItems = category === 'all'
     ? menuItems
@@ -93,16 +106,14 @@ const MenuOverview = () => {
       {error && (
         <Alert severity="warning" sx={{ mb: 2 }}>
           {error}
-          {error.includes('sample data') && (
-            <Button 
-              color="inherit" 
-              size="small" 
-              onClick={fetchMenuItems}
-              sx={{ ml: 1 }}
-            >
-              Retry Connection
-            </Button>
-          )}
+          <Button 
+            color="inherit" 
+            size="small" 
+            onClick={fetchMenuItems}
+            sx={{ ml: 1 }}
+          >
+            Retry Connection
+          </Button>
         </Alert>
       )}
 
@@ -121,7 +132,7 @@ const MenuOverview = () => {
           </ToggleButtonGroup>
         </div>
 
-        {process.env.NODE_ENV !== 'production' && menuItems.length === 0 && (
+        {process.env.NODE_ENV === 'development' && (
           <Button
             variant="outlined"
             onClick={handleUseSampleData}
