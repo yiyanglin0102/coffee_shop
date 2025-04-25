@@ -1,0 +1,217 @@
+type Account 
+  @model
+  @auth(rules: [{ allow: public }]) {
+  id: ID!
+  name: String!
+  foreignName: String
+  subtitle: String
+  marketingMessage: String
+  foreignMarketingMessage: String
+  phoneNumber: String!
+  slogan: String
+  language: String
+  description: String
+  foreignDescription: String
+  exclusive: Boolean!
+  grocery: Boolean!
+  newGroceryDesign: Boolean!
+  note: String
+  priorityLevel: String
+  pickupInstructionsEn: String
+  pickupInstructionsZh: String
+  kioskButtonColor: String
+  taxCode: String
+  remindCall: Boolean!
+  address: String!
+  orderRevealTime: String
+  preorderRevealTime: String
+  cutoffRevealTime: String
+  pickupRevealTime: String
+  spendingPerPoint: String
+  stripePayoutAccount: String
+  restaurantWifi: String
+  payoutMode: String
+  paymentChannel: String
+  pixiuMerchantAccount: String
+  ownerFirstName: String!
+  ownerLastName: String!
+  ownerEmail: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type MenuCategory
+  @model
+  @auth(rules: [{ allow: public }]) {
+  id: ID!
+  name_en: String!
+  name_zh: String
+  description_en: String
+  description_zh: String
+  sortOrder: Int!
+  isActive: Boolean!
+  imageUrl: String
+  dishes: [Dish] @hasMany(indexName: "byCategory", fields: ["id"])
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Dish
+  @model
+  @auth(rules: [{ allow: public }]) {
+  id: ID!
+  categoryId: ID! @index(name: "byCategory", sortKeyFields: ["name_en"])
+  name_en: String!
+  name_zh: String
+  description_en: String
+  description_zh: String
+  price: Float!
+  cost: Float
+  isAvailable: Boolean!
+  hasAlcohol: Boolean
+  isVegetarian: Boolean
+  isVegan: Boolean
+  isGlutenFree: Boolean
+  isSpicy: Boolean
+  isFeatured: Boolean
+  taxCode: String
+  rabbitTax: Float
+  membership: String
+  discount: String
+  color: String
+  imageUrl: String
+  preparationTime: Int
+  calories: Int
+  ingredients: String
+  allergens: [String]
+  displayOrder: Int
+  addOnGroups: [AddOnGroup] @manyToMany(relationName: "DishAddOnGroups")
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type AddOnGroup
+  @model
+  @auth(rules: [{ allow: public }]) {
+  id: ID!
+  name_en: String!
+  name_zh: String
+  description_en: String
+  description_zh: String
+  isRequired: Boolean!
+  minSelection: Int!
+  maxSelection: Int!
+  displayOrder: Int!
+  items: [AddOnItem] @hasMany(indexName: "byAddOnGroup", fields: ["id"])
+  dishes: [Dish] @manyToMany(relationName: "DishAddOnGroups")
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type AddOnItem
+  @model
+  @auth(rules: [{ allow: public }]) {
+  id: ID!
+  groupId: ID! @index(name: "byAddOnGroup", sortKeyFields: ["name_en"])
+  name_en: String!
+  name_zh: String
+  price: Float!
+  cost: Float
+  isAvailable: Boolean!
+  displayOrder: Int!
+  group: AddOnGroup @belongsTo(fields: ["groupId"])
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Order
+  @model
+  @auth(rules: [{ allow: public }]) {
+  id: ID!
+  orderNumber: String!
+  customerName: String
+  customerId: ID
+  phoneNumber: String
+  email: String
+  orderType: String! # 'dine-in', 'takeout', 'delivery'
+  status: String! # 'pending', 'preparing', 'ready', 'completed', 'cancelled'
+  paymentStatus: String! # 'pending', 'paid', 'refunded', 'partially_refunded'
+  subtotal: Float!
+  tax: Float!
+  tips: Float!
+  discount: Float!
+  total: Float!
+  channel: String! # 'POS', 'kiosk', 'online', 'mobile'
+  note: String
+  pickupTime: AWSDateTime
+  tableNumber: String
+  deliveryAddress: String
+  items: [OrderItem] @hasMany(indexName: "byOrder", fields: ["id"])
+  transactions: [Transaction] @hasMany(indexName: "byOrder", fields: ["id"])
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type OrderItem
+  @model
+  @auth(rules: [{ allow: public }]) {
+  id: ID!
+  orderId: ID! @index(name: "byOrder", sortKeyFields: ["createdAt"])
+  dishId: ID!
+  name: String!
+  price: Float!
+  quantity: Int!
+  specialInstructions: String
+  addOns: [OrderItemAddOn] @hasMany(indexName: "byOrderItem", fields: ["id"])
+  order: Order @belongsTo(fields: ["orderId"])
+  createdAt: AWSDateTime!
+}
+
+type OrderItemAddOn
+  @model
+  @auth(rules: [{ allow: public }]) {
+  id: ID!
+  orderItemId: ID! @index(name: "byOrderItem", sortKeyFields: ["name"])
+  addOnId: ID!
+  name: String!
+  price: Float!
+  quantity: Int!
+  orderItem: OrderItem @belongsTo(fields: ["orderItemId"])
+  createdAt: AWSDateTime!
+}
+
+type Transaction
+  @model
+  @auth(rules: [{ allow: public }]) {
+  id: ID!
+  orderId: ID! @index(name: "byOrder", sortKeyFields: ["createdAt"])
+  transactionNumber: String!
+  paymentMethod: String! # 'cash', 'creditCard', 'debitCard', 'mobilePayment'
+  lastFour: String
+  amount: Float!
+  tips: Float
+  status: String! # 'completed', 'pending', 'failed', 'refunded'
+  refundStatus: String # 'none', 'partial', 'full'
+  processor: String # 'stripe', 'square', etc.
+  processorTransactionId: String
+  order: Order @belongsTo(fields: ["orderId"])
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Customer
+  @model
+  @auth(rules: [{ allow: public }]) {
+  id: ID!
+  name: String!
+  phoneNumber: String!
+  email: String
+  address: String
+  loyaltyPoints: Int
+  favoriteItems: [ID] # Array of dish IDs
+  dietaryPreferences: [String]
+  notes: String
+  orders: [Order] @hasMany(indexName: "byCustomer", fields: ["id"])
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
