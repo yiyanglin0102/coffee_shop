@@ -94,7 +94,102 @@ const TransactionBar = () => {
         <Tab label="All" value="all" />
       </Tabs>
 
-      {/* Optional: Filter Inputs (omitted for brevity) */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', margin: '20px 0' }}>
+        <TextField
+          label="Search"
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search />
+              </InputAdornment>
+            ),
+          }}
+          placeholder="Order #, Last 4"
+        />
+
+        <TextField
+          label="From"
+          type="datetime-local"
+          variant="outlined"
+          size="small"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <DateRange />
+              </InputAdornment>
+            ),
+          }}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+
+        <TextField
+          label="To"
+          type="datetime-local"
+          variant="outlined"
+          size="small"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <DateRange />
+              </InputAdornment>
+            ),
+          }}
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+
+        <FormControl variant="outlined" size="small" style={{ minWidth: '120px' }}>
+          <InputLabel>Paid Status</InputLabel>
+          <Select
+            value={paidStatus}
+            onChange={(e) => setPaidStatus(e.target.value)}
+            label="Paid Status"
+          >
+            <MenuItem value="all">All</MenuItem>
+            <MenuItem value="completed">Completed</MenuItem>
+            <MenuItem value="pending">Pending</MenuItem>
+            <MenuItem value="failed">Failed</MenuItem>
+          </Select>
+        </FormControl>
+
+        <FormControl variant="outlined" size="small" style={{ minWidth: '120px' }}>
+          <InputLabel>Refund Status</InputLabel>
+          <Select
+            value={refundStatus}
+            onChange={(e) => setRefundStatus(e.target.value)}
+            label="Refund Status"
+          >
+            <MenuItem value="all">All</MenuItem>
+            <MenuItem value="none">None</MenuItem>
+            <MenuItem value="partial">Partial</MenuItem>
+            <MenuItem value="full">Full</MenuItem>
+          </Select>
+        </FormControl>
+
+        <Button 
+          variant="outlined" 
+          onClick={() => {
+            setSearchTerm('');
+            setStartDate('');
+            setEndDate('');
+            setPaidStatus('all');
+            setRefundStatus('all');
+          }}
+        >
+          Clear Filters
+        </Button>
+      </div>
 
       <div style={{ overflowX: 'auto' }}>
         <Table>
@@ -161,10 +256,10 @@ const TransactionBar = () => {
                                 </TableRow>
                               </TableHead>
                               <TableBody>
-                                {transaction.items.map((item, idx) => (
-                                  <TableRow key={idx}>
+                                {transaction.items.map((item, index) => (
+                                  <TableRow key={index}>
                                     <TableCell>{item.name}</TableCell>
-                                    <TableCell>${item.price?.toFixed(2)}</TableCell>
+                                    <TableCell>${item.price.toFixed(2)}</TableCell>
                                     <TableCell>{item.quantity}</TableCell>
                                     <TableCell>${(item.price * item.quantity).toFixed(2)}</TableCell>
                                   </TableRow>
@@ -175,8 +270,6 @@ const TransactionBar = () => {
                         )}
                       </Box>
                     </Collapse>
-
-
                   </TableCell>
                 </TableRow>
               </React.Fragment>
