@@ -7,6 +7,7 @@ import Orders from './pages/Orders';
 import Transactions from './pages/Transactions';
 import Categories from './pages/MenuManagement/Categories';
 import Dishes from './pages/MenuManagement/Dishes';
+import Addons from './pages/MenuManagement/Addons';
 import Account from './pages/Account';
 import Menu from './pages/Menu';
 import MenuOverview from './pages/MenuManagement/MenuOverview';
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/menu/overview" element={<MenuOverview />} />
           <Route path="/menu/categories" element={<Categories />} />
           <Route path="/menu/dishes" element={<Dishes />} />
+          <Route path="/menu/addons" element={<Addons />} />
           <Route path="/account" element={<Account />} />
         </Routes>
       </main>
