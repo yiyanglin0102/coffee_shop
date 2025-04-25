@@ -40,12 +40,7 @@ const Sidebar = () => {
           <NavItem to="/customer" icon="👀" label="Customer Display" />
         </SidebarGroup>
 
-        <SidebarGroup title="Financial">
-          <NavItem to="/transactions" icon="💳" label="Transactions" />
-          <NavItem to="/discounts" icon="🏷️" label="Discounts" />
-          <NavItem to="/income-reports" icon="📈" label="Income Report" />
-        </SidebarGroup>
-
+        <SidebarGroup title="Menu">
         <div className="nav-group">
           <div className="menu-label" onClick={() => toggleSection('menuManagement')}>
             <span className="nav-icon">📋</span>
@@ -54,7 +49,7 @@ const Sidebar = () => {
           </div>
           {expandedSections.menuManagement && (
             <div className="submenu">
-              <NavItem to="/menu/overview" icon="📊" label="Menu Overview" indent/>
+              <NavItem to="/menu/overview" icon="📊" label="Menu Overview" indent />
               <NavItem to="/menu/editor" icon="✏️" label="Menu Editor" indent />
               <NavItem to="/menu/categories" icon="🗂️" label="Categories" indent />
               <NavItem to="/menu/dishes" icon="🍛" label="Dishes" indent />
@@ -66,10 +61,17 @@ const Sidebar = () => {
             </div>
           )}
         </div>
+        </SidebarGroup>
+        
+        <SidebarGroup title="Financial">
+          <NavItem to="/transactions" icon="💳" label="Transactions" />
+          <NavItem to="/discounts" icon="🏷️" label="Discounts" />
+          <NavItem to="/income-reports" icon="📈" label="Income Report" />
+        </SidebarGroup>
 
         <SidebarGroup title="System">
-          <NavItem to="/devices" icon="💻" label="Devices" />
           <NavItem to="/account" icon="👤" label="Account" />
+          <NavItem to="/devices" icon="💻" label="Devices" />
           <NavItem to="/settings" icon="⚙️" label="Settings" />
         </SidebarGroup>
       </nav>

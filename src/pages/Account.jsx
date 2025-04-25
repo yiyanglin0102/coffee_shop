@@ -10,7 +10,7 @@ import {
   Button,
   Divider
 } from '@mui/material';
-import { sampleAccountData } from './sampleAccountData';
+import sampleAccountData from './sampleAccountData';
 
 const AccountForm = () => {
   const [formData, setFormData] = useState(sampleAccountData[0] || {
