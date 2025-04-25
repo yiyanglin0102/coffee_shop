@@ -5,8 +5,11 @@ import Sidebar from './components/Sidebar/Sidebar';
 import MainPage from './pages/MainPage';
 import Orders from './pages/Orders';
 import Transactions from './pages/Transactions';
+import Categories from './pages/MenuManagement/Categories';
+import Dishes from './pages/MenuManagement/Dishes';
+import Account from './pages/Account';
 import Menu from './pages/Menu';
-import MenuOverview from './pages/MenuOverview/MenuOverview';
+import MenuOverview from './pages/MenuManagement/MenuOverview';
 
 import { Amplify } from 'aws-amplify';
 import config from './aws-exports';
@@ -30,7 +33,7 @@ Amplify.configure({
 
 const App = () => (
   <Router>
-    <div className="app"> {console.log("??received:", process.env.REACT_APP_API_KEY)}
+    <div className="app">
       <Sidebar />
       <main className="main-content">
         <Routes>
@@ -39,6 +42,9 @@ const App = () => (
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/menu" element={<Menu />} />
           <Route path="/menu/overview" element={<MenuOverview />} />
+          <Route path="/menu/categories" element={<Categories />} />
+          <Route path="/menu/dishes" element={<Dishes />} />
+          <Route path="/account" element={<Account />} />
         </Routes>
       </main>
     </div>

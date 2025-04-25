@@ -1,0 +1,39 @@
+Name 
+Foreign Name
+Subtitle
+Marketing Message
+Foreign Marketing Message
+Phone Number
+Slogan
+Language
+Description
+Foreign Description
+Exclusive
+Grocery
+Use new grocery design
+Note
+Priority Level
+Pickup Instructions - English
+Pickup Instructions - Chinese
+Kiosk button circle color
+
+Tax Code
+Remind Call
+Address
+Order Reveal Time Duration
+Preorder Order Reveal Time Duration
+Cutoff Order Reveal Time Duration
+Pickup Order Reveal Time Duration
+Spending Per Point
+Stripe Payout Account
+Restaurant WiFi
+Payout Mode
+Payment Channel
+Pixiu Merchant Account
+
+
+
+Restaurant Owner Information
+Owner First Name
+Owner Last Name
+Owner Email

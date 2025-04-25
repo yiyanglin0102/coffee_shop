@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Grid, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { mockMenu } from '../mockData';  // Moved to top level
 
 const Home = () => {
 
