@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar/Sidebar';
-import MainPage from './pages/MainPage';
+import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import Orders from './pages/Orders';
 import Transactions from './pages/Transactions';
 import Categories from './pages/MenuManagement/Categories';
@@ -38,7 +38,7 @@ const App = () => (
       <Sidebar />
       <main className="main-content">
         <Routes>
-          <Route path="/" element={<MainPage />} />
+          <Route path="/" element={<AnalyticsDashboard />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/menu" element={<Menu />} />

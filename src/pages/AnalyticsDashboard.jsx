@@ -1,105 +1,168 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box, Typography, Paper, Grid, Tabs, Tab, Table, TableBody,
-  TableCell, TableContainer, TableHead, TableRow, Divider
+  TableCell, TableContainer, TableHead, TableRow, Divider, CircularProgress
 } from '@mui/material';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line
 } from 'recharts';
-import { sampleTransactionsData } from './sampleTransactionsData';
+import { generateClient } from 'aws-amplify/api';
+import { listTransactions } from '../graphql/queries';
+
+const client = generateClient();
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
-const RestaurantAnalytics = () => {
+const AnalyticsDashboard = () => {
   const [tabValue, setTabValue] = useState(0);
-  const [dateRange, setDateRange] = useState('week');
   const [processedData, setProcessedData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Process transaction data
-    const processData = () => {
-      const data = {
-        dailySales: {},
-        paymentMethods: {},
-        topItems: {},
-        hourlySales: Array(24).fill(0).map((_, i) => ({ hour: i, sales: 0 })),
-        tipsData: { total: 0, byMethod: {} },
-        refunds: 0,
-        taxes: { included: 0, excluded: 0 },
-        netSales: 0,
-        grossSales: 0
-      };
-
-      sampleTransactionsData.forEach(transaction => {
-        const date = transaction.createdTime.split(' ')[0];
-        const hour = parseInt(transaction.createdTime.split(' ')[1].split(':')[0]);
-        
-        // Daily sales
-        data.dailySales[date] = (data.dailySales[date] || 0) + transaction.total;
-        
-        // Payment methods
-        data.paymentMethods[transaction.paymentMethod] = 
-          (data.paymentMethods[transaction.paymentMethod] || 0) + transaction.total;
-        
-        // Hourly sales
-        data.hourlySales[hour].sales += transaction.total;
-        
-        // Tips
-        data.tipsData.total += transaction.tips;
-        data.tipsData.byMethod[transaction.paymentMethod] = 
-          (data.tipsData.byMethod[transaction.paymentMethod] || 0) + transaction.tips;
-        
-        // Refunds
-        if (transaction.refundStatus !== 'none') {
-          data.refunds += transaction.total;
-        }
-        
-        // Items (assuming 8% tax rate for example)
-        const taxRate = 0.08;
-        const preTaxAmount = transaction.total / (1 + taxRate);
-        data.taxes.included += transaction.total - preTaxAmount;
-        data.taxes.excluded += preTaxAmount;
-        
-        // Net/Gross
-        data.grossSales += transaction.total;
-        data.netSales += preTaxAmount;
-        
-        // Top items
-        transaction.items.forEach(item => {
-          data.topItems[item.name] = {
-            quantity: (data.topItems[item.name]?.quantity || 0) + item.quantity,
-            revenue: (data.topItems[item.name]?.revenue || 0) + (item.price * item.quantity)
-          };
+    const fetchTransactions = async () => {
+      try {
+        setLoading(true);
+        const { data } = await client.graphql({
+          query: listTransactions
         });
-      });
-
-      setProcessedData(data);
+        processData(data.listTransactions.items);
+      } catch (err) {
+        setError(err);
+        console.error('Error fetching transactions:', err);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    processData();
+    fetchTransactions();
   }, []);
+
+  const processData = (transactions) => {
+    const data = {
+      dailySales: {},
+      paymentMethods: {},
+      topItems: {},
+      hourlySales: Array(24).fill(0).map((_, i) => ({ hour: i, sales: 0 })),
+      tipsData: { total: 0, byMethod: {} },
+      refunds: 0,
+      taxes: { included: 0, excluded: 0 },
+      netSales: 0,
+      grossSales: 0
+    };
+
+    transactions.forEach(transaction => {
+      if (!transaction) return;
+      
+      // Parse date and time from createdAt
+      const transactionDate = new Date(transaction.createdAt);
+      const dateKey = transactionDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+      const hour = transactionDate.getHours();
+      
+      const amount = parseFloat(transaction.amount) || 0;
+      const tips = parseFloat(transaction.tips) || 0;
+      
+      // Daily sales
+      data.dailySales[dateKey] = (data.dailySales[dateKey] || 0) + amount;
+      
+      // Payment methods (convert to lowercase for consistency)
+      const paymentMethod = transaction.paymentMethod?.toLowerCase() || 'unknown';
+      data.paymentMethods[paymentMethod] = 
+        (data.paymentMethods[paymentMethod] || 0) + amount;
+      
+      // Hourly sales
+      data.hourlySales[hour].sales += amount;
+      
+      // Tips
+      data.tipsData.total += tips;
+      data.tipsData.byMethod[paymentMethod] = 
+        (data.tipsData.byMethod[paymentMethod] || 0) + tips;
+      
+      // Refunds
+      if (transaction.refundStatus && transaction.refundStatus !== 'none') {
+        data.refunds += amount;
+      }
+      
+      // Tax calculation (assuming 8% tax rate)
+      const taxRate = 0.08;
+      const preTaxAmount = amount / (1 + taxRate);
+      data.taxes.included += amount - preTaxAmount;
+      data.taxes.excluded += preTaxAmount;
+      
+      // Net/Gross sales
+      data.grossSales += amount;
+      data.netSales += preTaxAmount;
+      
+      // Top items - check if items exist and is an array
+      if (Array.isArray(transaction.items)) {
+        transaction.items.forEach(item => {
+          if (!item?.name) return;
+          
+          const itemName = item.name;
+          const itemQuantity = parseInt(item.quantity) || 0;
+          const itemPrice = parseFloat(item.price) || 0;
+          
+          data.topItems[itemName] = {
+            quantity: (data.topItems[itemName]?.quantity || 0) + itemQuantity,
+            revenue: (data.topItems[itemName]?.revenue || 0) + (itemPrice * itemQuantity)
+          };
+        });
+      }
+    });
+
+    setProcessedData(data);
+  };
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
   };
 
-  const handleDateRangeChange = (event, newRange) => {
-    setDateRange(newRange);
-  };
-
   // Convert objects to arrays for charts
-  const paymentMethodsData = Object.entries(processedData.paymentMethods || {}).map(([name, value]) => ({ name, value }));
+  const paymentMethodsData = Object.entries(processedData.paymentMethods || {})
+    .map(([name, value]) => ({ 
+      name: name.charAt(0).toUpperCase() + name.slice(1), // Capitalize first letter
+      value 
+    }));
+
   const topItemsByRevenue = Object.entries(processedData.topItems || {})
     .sort((a, b) => b[1].revenue - a[1].revenue)
     .slice(0, 5)
     .map(([name, data]) => ({ name, value: data.revenue }));
+
   const topItemsByQuantity = Object.entries(processedData.topItems || {})
     .sort((a, b) => b[1].quantity - a[1].quantity)
     .slice(0, 5)
     .map(([name, data]) => ({ name, value: data.quantity }));
-  const dailySalesData = Object.entries(processedData.dailySales || {}).map(([name, value]) => ({ name, sales: value }));
-  const tipsByMethodData = Object.entries(processedData.tipsData?.byMethod || {}).map(([name, value]) => ({ name, value }));
+
+  const dailySalesData = Object.entries(processedData.dailySales || {})
+    .map(([name, value]) => ({ 
+      name: new Date(name).toLocaleDateString(), // Format date nicely
+      sales: value 
+    }))
+    .sort((a, b) => new Date(a.name) - new Date(b.name)); // Sort by date
+
+  const tipsByMethodData = Object.entries(processedData.tipsData?.byMethod || {})
+    .map(([name, value]) => ({ 
+      name: name.charAt(0).toUpperCase() + name.slice(1), // Capitalize first letter
+      value 
+    }));
+
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+        <Typography color="error">Error loading analytics data: {error.message}</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ p: 3 }}>
@@ -262,31 +325,35 @@ const RestaurantAnalytics = () => {
                   </Grid>
                 </Grid>
                 
-                <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>Full Item Breakdown</Typography>
-                <TableContainer>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Item</TableCell>
-                        <TableCell align="right">Quantity</TableCell>
-                        <TableCell align="right">Revenue</TableCell>
-                        <TableCell align="right">Avg. Price</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {Object.entries(processedData.topItems || {})
-                        .sort((a, b) => b[1].revenue - a[1].revenue)
-                        .map(([name, data]) => (
-                          <TableRow key={name}>
-                            <TableCell>{name}</TableCell>
-                            <TableCell align="right">{data.quantity}</TableCell>
-                            <TableCell align="right">${data.revenue.toFixed(2)}</TableCell>
-                            <TableCell align="right">${(data.revenue / data.quantity).toFixed(2)}</TableCell>
+                {Object.keys(processedData.topItems || {}).length > 0 && (
+                  <>
+                    <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>Full Item Breakdown</Typography>
+                    <TableContainer>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Item</TableCell>
+                            <TableCell align="right">Quantity</TableCell>
+                            <TableCell align="right">Revenue</TableCell>
+                            <TableCell align="right">Avg. Price</TableCell>
                           </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                        </TableHead>
+                        <TableBody>
+                          {Object.entries(processedData.topItems || {})
+                            .sort((a, b) => b[1].revenue - a[1].revenue)
+                            .map(([name, data]) => (
+                              <TableRow key={name}>
+                                <TableCell>{name}</TableCell>
+                                <TableCell align="right">{data.quantity}</TableCell>
+                                <TableCell align="right">${data.revenue.toFixed(2)}</TableCell>
+                                <TableCell align="right">${(data.revenue / data.quantity).toFixed(2)}</TableCell>
+                              </TableRow>
+                            ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </>
+                )}
               </Box>
             )}
             
@@ -312,4 +379,4 @@ const RestaurantAnalytics = () => {
   );
 };
 
-export default RestaurantAnalytics;
+export default AnalyticsDashboard;

@@ -33,7 +33,7 @@ const Sidebar = () => {
 
       <nav className="sidebar-nav">
         <SidebarGroup title="Operations">
-          <NavItem to="/" icon="📊" label="Main Dashboard" />
+          <NavItem to="/" icon="📊" label="Restaurant Analytics" />
           <NavItem to="/orders" icon="🧾" label="Order Tickets" />
           <NavItem to="/smart-ordering" icon="🤖" label="Smart Ordering" />
           <NavItem to="/kitchen" icon="👨‍🍳" label="Kitchen Display" />
